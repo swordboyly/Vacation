@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>离校学生列表</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="icon" href="https://static.jianshukeji.com/highcharts/images/favicon.ico">
+    <script src="https://img.hcharts.cn/highcharts/highcharts.js"></script>
+    <script src="https://img.hcharts.cn/highcharts/modules/exporting.js"></script>
+    <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+</head>
+<body>
+    {% include "leaveschoolregistration/query.html" %}
+    <div class="container" style="min-width: max-content">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+        <div id="container1" style="min-width:max-content;height:300px">
+            </div>
+            <p class="text-center">已完成登记人数：{{ finisher }},未完成登记人数：{{ remainder }}</p>
+            <div class="table-responsive">
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>学号</th>
+                        <th>学院</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>班级</th>
+                        <th>民族</th>
+                        <th>地址</th>
+                        <th>去向</th>
+                        <th>离校时间</th>
+                        <th>归校时间</th>
+                        <th>联系电话</th>
+                        <th>辅导员</th>
+                        <th>辅导员电话</th>
+                        <th>假期</th>
+                        <th>年级</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stu in querylist %}
+                    <tr>
+                        <td>{{ stu.schoolnumber }}</td>
+                        <td>{{ stu.stusystem }}</td>
+                        <td>{{ stu.stuname }}</td>
+                        <td>{{ stu.sex }}</td>
+                        <td>{{ stu.stuclass }}</td>
+                        <td>{{ stu.stunation }}</td>
+                        <td>{{ stu.stuaddress }}</td>
+                        <td>{{ stu.studirection }}</td>
+                        <td>{{ stu.leavetime }}</td>
+                        <td>{{ stu.cometime }}</td>
+                        <td>{{ stu.stuphone }}</td>
+                        <td>{{ stu.teacher }}</td>
+                        <td>{{ stu.teacherphone }}</td>
+                        <td>{{ stu.get_classify_display }}</td>
+                        <td>{{ stu.get_stugrade_display }}</td>
+                    </tr>
+                    {% empty %}
+                       <p class="text-center">
+                       没有查询到符合条件的记录
+                       </p>
+                   {% endfor %}
+                </tbody>
+                </table>
+             </div>
+         </div>
+    </div>
+    </div>
+
+
+    <script>
+        // Build the chart
+        Highcharts.chart('container1', {
+                chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                },
+                title: {
+                        text: '{{ stusystem }}{{ grade }}级{{ vacation }}节学生登记统计'
+                },
+                tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                        pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                        enabled: false
+                                },
+                                showInLegend: true
+                        }
+                },
+                series: [{
+                        name: '{{ stusystem }}{{ grade }}级{{ vacation }}节学生登记统计',
+                        colorByPoint: true,
+                        data: [{
+                                name: '已登记',
+                                y: {{ finisher }},
+                                sliced: true,
+                                selected: true
+                        }, {
+                                name: '未登记',
+                                y: {{ remainder }}
+                        },]
+                }]
+        });
+    </script>
+</body>
+</html>
